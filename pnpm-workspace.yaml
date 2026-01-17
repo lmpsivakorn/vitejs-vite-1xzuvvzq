@@ -1,0 +1,4 @@
+overrides:
+  '@dataconnect/generated': link:src/dataconnect-generated
+  '@tiptap/core': ^2
+  postcss: ^8

@@ -1,30 +1,37 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { useTheme } from 'vuetify'
+import ScrollToTop from '@core/components/ScrollToTop.vue'
+import initCore from '@core/initCore'
+import {
+  initConfigStore,
+  useConfigStore,
+} from '@core/stores/config'
+import { hexToRgb } from '@core/utils/colorConverter'
+
+import { provide } from 'vue'
+import Toast from '@core/components/Toast.vue'
+
+const { global } = useTheme()
+
+const toastService = ref(null)
+
+provide('$toast', () => toastService.value)
+
+// ℹ️ Sync current theme with initial loader theme
+initCore()
+initConfigStore()
+
+const configStore = useConfigStore()
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+  <VLocaleProvider :rtl="configStore.isAppRTL">
+    <!-- ℹ️ This is required to set the background color of active nav link based on currently active global theme's primary -->
+    <VApp :style="`--v-global-theme-primary: ${hexToRgb(global.current.value.colors.primary)}`">
+      <Toast v-model="toastService" />
+      <RouterView />
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+      <ScrollToTop />
+    </VApp>
+  </VLocaleProvider>
+</template>
